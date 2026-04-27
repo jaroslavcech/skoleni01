@@ -1,0 +1,118 @@
+:root {
+  --page-bg: #f3ece3;
+  --page-accent: #eadfd1;
+  --headline: #18252d;
+  --text: #40515b;
+  --muted: #6d7d86;
+  --panel-bg: rgba(255, 250, 244, 0.78);
+  --panel-border: rgba(52, 71, 81, 0.12);
+  --card-bg: rgba(255, 255, 255, 0.78);
+  --input-bg: rgba(255, 255, 255, 0.84);
+  --input-border: rgba(52, 71, 81, 0.18);
+  --accent-strong: #b14f2b;
+  --accent-soft: rgba(177, 79, 43, 0.12);
+  --focus-ring: rgba(177, 79, 43, 0.28);
+  --danger: #a13030;
+  --shadow-soft: 0 18px 45px rgba(30, 47, 57, 0.12);
+  --display: 'Space Grotesk', 'Avenir Next', 'Segoe UI', sans-serif;
+  --body: 'Manrope', 'Segoe UI', sans-serif;
+  color: var(--text);
+  background: var(--page-bg);
+  font-family: var(--body);
+  line-height: 1.5;
+  font-weight: 500;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.9), transparent 32%),
+    linear-gradient(160deg, var(--page-bg), var(--page-accent));
+}
+
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: auto;
+  border-radius: 999px;
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+body::before {
+  width: 14rem;
+  height: 14rem;
+  top: 4rem;
+  right: 6vw;
+  background: rgba(255, 152, 114, 0.16);
+}
+
+body::after {
+  width: 18rem;
+  height: 18rem;
+  bottom: 2rem;
+  left: 4vw;
+  background: rgba(64, 108, 128, 0.12);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1,
+h2,
+strong {
+  color: var(--headline);
+}
+
+h1,
+h2 {
+  font-family: var(--display);
+  line-height: 0.98;
+  margin: 0;
+}
+
+h1 {
+  font-size: clamp(3rem, 5vw, 5.3rem);
+  margin-bottom: 18px;
+}
+
+h2 {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+}
+
+p,
+dl,
+dt,
+dd {
+  margin: 0;
+}
+
+button,
+input {
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease;
+}
+
+button:hover,
+input:hover {
+  border-color: rgba(177, 79, 43, 0.38);
+}
