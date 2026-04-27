@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "tasks": [
+    {
+      "id": "76f2dd32-f726-451e-9401-ad9171b594df",
+      "title": "Skoleni vibecoding",
+      "completed": false
+    },
+    {
+      "id": "outline-launch-checklist",
+      "title": "Outline launch checklist",
+      "completed": true
+    },
+    {
+      "id": "draft-onboarding-copy",
+      "title": "Draft onboarding copy",
+      "completed": false
+    },
+    {
+      "id": "test-mobile-task-flow",
+      "title": "Test mobile task flow",
+      "completed": false
+    }
+  ]
+}

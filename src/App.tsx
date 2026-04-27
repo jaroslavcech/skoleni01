@@ -8,69 +8,108 @@ type Task = {
   completed: boolean
 }
 
-const TASKS_STORAGE_KEY = 'task-manager.tasks'
+const TASKS_ENDPOINT = '/api/tasks'
 
-const initialTasks: Task[] = [
-  {
-    id: 'outline-launch-checklist',
-    title: 'Outline launch checklist',
-    completed: true,
-  },
-  {
-    id: 'draft-onboarding-copy',
-    title: 'Draft onboarding copy',
-    completed: false,
-  },
-  {
-    id: 'test-mobile-task-flow',
-    title: 'Test mobile task flow',
-    completed: false,
-  },
-]
+type TaskLoadState = 'loading' | 'ready' | 'error'
 
-function loadStoredTasks(): Task[] {
-  if (typeof window === 'undefined') {
-    return initialTasks
+type TaskResponse = {
+  tasks: Task[]
+}
+
+type TaskErrorResponse = {
+  error: string
+}
+
+function isTask(value: unknown): value is Task {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    'id' in value &&
+    'title' in value &&
+    'completed' in value &&
+    typeof value.id === 'string' &&
+    typeof value.title === 'string' &&
+    typeof value.completed === 'boolean'
+  )
+}
+
+async function loadTasks(): Promise<Task[]> {
+  const response = await fetch(TASKS_ENDPOINT)
+
+  if (!response.ok) {
+    throw new Error('Failed to load tasks from the backend.')
   }
 
-  const storedTasks = window.localStorage.getItem(TASKS_STORAGE_KEY)
+  const payload = (await response.json()) as TaskResponse
 
-  if (!storedTasks) {
-    return initialTasks
+  if (!payload || !Array.isArray(payload.tasks)) {
+    throw new Error('The task payload is invalid.')
   }
 
-  try {
-    const parsedTasks = JSON.parse(storedTasks) as unknown
+  return payload.tasks.filter(isTask)
+}
 
-    if (!Array.isArray(parsedTasks)) {
-      return initialTasks
-    }
+async function saveTasks(tasks: Task[]): Promise<void> {
+  const response = await fetch(TASKS_ENDPOINT, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ tasks }),
+  })
 
-    return parsedTasks.filter(
-      (task): task is Task =>
-        typeof task === 'object' &&
-        task !== null &&
-        'id' in task &&
-        'title' in task &&
-        'completed' in task &&
-        typeof task.id === 'string' &&
-        typeof task.title === 'string' &&
-        typeof task.completed === 'boolean',
-    )
-  } catch {
-    return initialTasks
+  if (!response.ok) {
+    const payload = (await response.json().catch(() => null)) as
+      | TaskErrorResponse
+      | null
+
+    const message = payload?.error ?? 'Failed to save tasks to disk.'
+    throw new Error(message)
   }
 }
 
 function App() {
-  const [tasks, setTasks] = useState<Task[]>(loadStoredTasks)
+  const [tasks, setTasks] = useState<Task[]>([])
   const [draft, setDraft] = useState('')
   const [error, setError] = useState('')
+  const [loadState, setLoadState] = useState<TaskLoadState>('loading')
   const inputId = useId()
 
   useEffect(() => {
-    window.localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks))
-  }, [tasks])
+    let active = true
+
+    loadTasks()
+      .then((loadedTasks) => {
+        if (!active) {
+          return
+        }
+
+        setTasks(loadedTasks)
+        setLoadState('ready')
+      })
+      .catch(() => {
+        if (!active) {
+          return
+        }
+
+        setError('Unable to load tasks from the local backend.')
+        setLoadState('error')
+      })
+
+    return () => {
+      active = false
+    }
+  }, [])
+
+  useEffect(() => {
+    if (loadState !== 'ready') {
+      return
+    }
+
+    saveTasks(tasks).catch(() => {
+      setError('Unable to save tasks to the local disk backend.')
+    })
+  }, [loadState, tasks])
 
   const completedCount = tasks.filter((task) => task.completed).length
   const pendingCount = tasks.length - completedCount
@@ -169,6 +208,12 @@ function App() {
           />
           <button type="submit">Add task</button>
         </form>
+
+        {loadState === 'loading' ? (
+          <p className="form-hint" role="status">
+            Loading tasks from the local backend...
+          </p>
+        ) : null}
 
         {error ? (
           <p className="form-error" id={`${inputId}-error`} role="alert">
