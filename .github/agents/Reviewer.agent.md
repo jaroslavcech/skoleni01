@@ -1,6 +1,7 @@
 ---
 name: 'Reviewer'
 description: 'Review code for quality, accessibility, regressions, and adherence to project standards.'
+model: Claude Sonnet 4.6 (copilot)
 tools: ['vscode/askQuestions', 'read', 'search', 'web', 'agent']
 ---
 # Code Reviewer agent

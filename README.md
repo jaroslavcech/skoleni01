@@ -1,6 +1,6 @@
 # Task Manager
 
-A responsive task manager built with React, TypeScript, and Vite. It supports adding tasks, marking tasks as completed, and deleting tasks from the current board.
+A responsive task manager built with React, TypeScript, and Vite. It supports adding tasks, marking tasks as completed, deleting tasks, and keeps the task list in local storage.
 
 ## Scripts
 

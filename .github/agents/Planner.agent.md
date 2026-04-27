@@ -1,7 +1,7 @@
 ---
 name: 'Planner'
 description: 'Break down requested features into implementation steps, risks, and validation checks before coding.'
-tools: ['vscode_askQuestions', 'read', 'search', 'agent']
+tools: ['vscode/askQuestions', 'read', 'search', 'agent']
 ---
 # Feature Planner agent
 

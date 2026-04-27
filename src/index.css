@@ -11,11 +11,12 @@
   --input-border: rgba(52, 71, 81, 0.18);
   --accent-strong: #b14f2b;
   --accent-soft: rgba(177, 79, 43, 0.12);
-  --focus-ring: rgba(177, 79, 43, 0.28);
+  --focus-ring: rgba(177, 79, 43, 0.58);
   --danger: #a13030;
   --shadow-soft: 0 18px 45px rgba(30, 47, 57, 0.12);
   --display: 'Space Grotesk', 'Avenir Next', 'Segoe UI', sans-serif;
   --body: 'Manrope', 'Segoe UI', sans-serif;
+  color-scheme: light;
   color: var(--text);
   background: var(--page-bg);
   font-family: var(--body);
@@ -75,8 +76,7 @@ body::after {
 }
 
 h1,
-h2,
-strong {
+h2 {
   color: var(--headline);
 }
 
@@ -115,4 +115,39 @@ input {
 button:hover,
 input:hover {
   border-color: rgba(177, 79, 43, 0.38);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --page-bg: #16181c;
+    --page-accent: #252a31;
+    --headline: #f6ede1;
+    --text: #d9cfc1;
+    --muted: #b2a79a;
+    --panel-bg: rgba(33, 37, 44, 0.82);
+    --panel-border: rgba(232, 221, 207, 0.1);
+    --card-bg: rgba(43, 47, 55, 0.92);
+    --input-bg: rgba(28, 31, 37, 0.94);
+    --input-border: rgba(232, 221, 207, 0.18);
+    --accent-strong: #e6875f;
+    --accent-soft: rgba(230, 135, 95, 0.14);
+    --focus-ring: rgba(230, 135, 95, 0.72);
+    --danger: #ff8e7f;
+    --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.3);
+    color-scheme: dark;
+  }
+
+  body {
+    background:
+      radial-gradient(circle at top, rgba(255, 255, 255, 0.05), transparent 32%),
+      linear-gradient(160deg, var(--page-bg), var(--page-accent));
+  }
+
+  body::before {
+    background: rgba(230, 135, 95, 0.12);
+  }
+
+  body::after {
+    background: rgba(64, 108, 128, 0.18);
+  }
 }

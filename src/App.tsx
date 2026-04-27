@@ -1,28 +1,78 @@
-import { useId, useMemo, useState } from 'react'
+import { useEffect, useId, useState } from 'react'
 import type { FormEvent } from 'react'
 import './App.css'
 
 type Task = {
-  id: number
+  id: string
   title: string
   completed: boolean
 }
 
+const TASKS_STORAGE_KEY = 'task-manager.tasks'
+
+const initialTasks: Task[] = [
+  {
+    id: 'outline-launch-checklist',
+    title: 'Outline launch checklist',
+    completed: true,
+  },
+  {
+    id: 'draft-onboarding-copy',
+    title: 'Draft onboarding copy',
+    completed: false,
+  },
+  {
+    id: 'test-mobile-task-flow',
+    title: 'Test mobile task flow',
+    completed: false,
+  },
+]
+
+function loadStoredTasks(): Task[] {
+  if (typeof window === 'undefined') {
+    return initialTasks
+  }
+
+  const storedTasks = window.localStorage.getItem(TASKS_STORAGE_KEY)
+
+  if (!storedTasks) {
+    return initialTasks
+  }
+
+  try {
+    const parsedTasks = JSON.parse(storedTasks) as unknown
+
+    if (!Array.isArray(parsedTasks)) {
+      return initialTasks
+    }
+
+    return parsedTasks.filter(
+      (task): task is Task =>
+        typeof task === 'object' &&
+        task !== null &&
+        'id' in task &&
+        'title' in task &&
+        'completed' in task &&
+        typeof task.id === 'string' &&
+        typeof task.title === 'string' &&
+        typeof task.completed === 'boolean',
+    )
+  } catch {
+    return initialTasks
+  }
+}
+
 function App() {
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: 1, title: 'Outline launch checklist', completed: true },
-    { id: 2, title: 'Draft onboarding copy', completed: false },
-    { id: 3, title: 'Test mobile task flow', completed: false },
-  ])
+  const [tasks, setTasks] = useState<Task[]>(loadStoredTasks)
   const [draft, setDraft] = useState('')
   const [error, setError] = useState('')
   const inputId = useId()
 
-  const completedCount = useMemo(
-    () => tasks.filter((task) => task.completed).length,
-    [tasks],
-  )
+  useEffect(() => {
+    window.localStorage.setItem(TASKS_STORAGE_KEY, JSON.stringify(tasks))
+  }, [tasks])
 
+  const completedCount = tasks.filter((task) => task.completed).length
   const pendingCount = tasks.length - completedCount
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
@@ -37,7 +87,7 @@ function App() {
 
     setTasks((currentTasks) => [
       {
-        id: Date.now(),
+        id: crypto.randomUUID(),
         title: nextTitle,
         completed: false,
       },
@@ -47,7 +97,7 @@ function App() {
     setError('')
   }
 
-  const toggleTask = (taskId: number) => {
+  const toggleTask = (taskId: string) => {
     setTasks((currentTasks) =>
       currentTasks.map((task) =>
         task.id === taskId
@@ -57,7 +107,7 @@ function App() {
     )
   }
 
-  const deleteTask = (taskId: number) => {
+  const deleteTask = (taskId: string) => {
     setTasks((currentTasks) =>
       currentTasks.filter((task) => task.id !== taskId),
     )
@@ -129,19 +179,23 @@ function App() {
         <ul className="task-list" aria-label="Task items">
           {tasks.map((task) => (
             <li className="task-card" key={task.id}>
-              <label className="task-main">
+              <div className="task-main">
                 <input
+                  id={`task-${task.id}`}
                   type="checkbox"
                   checked={task.completed}
                   onChange={() => toggleTask(task.id)}
+                  aria-describedby={`task-status-${task.id}`}
                 />
-                <span>
-                  <strong>{task.title}</strong>
-                  <small>
+                <div className="task-copy">
+                  <label className="task-label" htmlFor={`task-${task.id}`}>
+                    <strong>{task.title}</strong>
+                  </label>
+                  <small id={`task-status-${task.id}`}>
                     {task.completed ? 'Completed and archived for reference.' : 'Pending and ready for action.'}
                   </small>
-                </span>
-              </label>
+                </div>
+              </div>
               <button
                 type="button"
                 className="ghost-button"

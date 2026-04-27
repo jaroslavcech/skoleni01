@@ -1,7 +1,7 @@
 ---
 name: 'Accessibility'
 description: 'Inspect UI work for semantics, keyboard flow, focus handling, readable states, and responsive accessibility risks.'
-tools: ['vscode_askQuestions', 'read', 'search', 'web', 'agent']
+tools: ['vscode/askQuestions', 'read', 'search', 'web', 'agent']
 ---
 # Accessibility agent
 
